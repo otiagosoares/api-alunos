@@ -1,16 +1,16 @@
 # api-alunos
 
-##installl:
+## installl:
 npx i
 
-##migrations
+## migrations
 npx sequelize migration:create --name=entitie_name
 npx sequelize db:migrate
 
-##init:
+## init:
 npm run dev
 
-##.env
+## .env
 DATABASE_NAME=db_name
 DATABASE_HOST=localhost
 DATABASE_PORT=3307
