@@ -3,7 +3,7 @@ import User from '../models/User';
 class UserController {
   async index(req, res) {
     try {
-      const users = await User.findAll();
+      const users = await User.findAll({ attributes: ['id', 'nome', 'email'] });
       return res.json(users);
     } catch (e) {
       console.error(`Error: ${e}`);
@@ -16,9 +16,15 @@ class UserController {
 
   async show(req, res) {
     try {
-      const { id } = req.params;
-      const user = await User.findByPk(id);
-      return res.json(user);
+      const user = await User.findByPk(req.params.id);
+      if (!user) {
+        return res.status(404).json({
+          errors: ['Not Found'],
+          status: 400,
+        });
+      }
+      const { id, nome, email } = user;
+      return res.json({ id, nome, email });
     } catch (e) {
       console.error(e);
       return res.status(400).json({
@@ -30,11 +36,10 @@ class UserController {
 
   async create(req, res) {
     try {
-      const { nome, email, password } = req.body;
-      const novoUser = await User.create({
-        nome, email, password,
-      });
-      return res.status(201).json(novoUser);
+      const novoUser = await User.create(req.body);
+      const { id, nome, email } = novoUser;
+
+      return res.status(201).json({ id, nome, email });
     } catch (e) {
       console.error(e);
       return res.status(400).json({
@@ -46,16 +51,19 @@ class UserController {
 
   async update(req, res) {
     try {
-      const { id } = req.params;
+      const { userId } = req;
 
-      if (!id) {
+      console.log(userId);
+
+      if (!userId) {
+        console.log('userId', req.userId);
         return res.status(400).json({
           errors: ['ID not missing'],
           message: 'Bad Request',
         });
       }
 
-      const user = await User.findByPk(id);
+      const user = await User.findByPk(userId);
 
       if (!user) {
         return res.status(404).json({
@@ -65,7 +73,8 @@ class UserController {
       }
 
       const userUpdated = await user.update(req.body);
-      return res.json(userUpdated);
+      const { id, nome, email } = userUpdated;
+      return res.json({ id, nome, email });
     } catch (e) {
       console.error(e);
       return res.status(400).json({
@@ -77,16 +86,16 @@ class UserController {
 
   async delete(req, res) {
     try {
-      const { id } = req.params;
+      const { userId } = req;
 
-      if (!id) {
+      if (!userId) {
         return res.status(400).json({
           errors: ['ID not missing'],
           message: 'Bad Request',
         });
       }
 
-      const user = await User.findByPk(id);
+      const user = await User.findByPk(userId);
 
       if (!user) {
         return res.status(404).json({
@@ -95,8 +104,8 @@ class UserController {
         });
       }
 
-      const userDestroied = await user.destroy();
-      return res.json(userDestroied);
+      await user.destroy();
+      return res.json(null);
     } catch (e) {
       console.error(e);
       return res.status(400).json({
