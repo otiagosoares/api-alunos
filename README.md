@@ -7,6 +7,7 @@
 
 - npx sequelize migration:create --name=entitie_name
 - npx sequelize db:migrate
+- npx sequelize seed:generate --name criar-usuarios
 
 ## init:
 npm run dev
