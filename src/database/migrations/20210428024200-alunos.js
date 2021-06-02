@@ -31,18 +31,18 @@ module.exports = {
         type: Sequelize.FLOAT,
         allowNull: false,
       },
-      createdAt: {
+      created_at: {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      updatedAt: {
+      updated_at: {
         type: Sequelize.DATE,
         allowNull: false,
       },
     });
   },
 
-  down: async (queryInterface, Sequelnullize) => {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('alunos');
   },
 };
